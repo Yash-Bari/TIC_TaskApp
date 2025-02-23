@@ -1,0 +1,160 @@
+{% extends "base.html" %}
+
+{% block title %}{{ task.title }} - TIC TaskApp{% endblock %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-8">
+    <!-- Back to Dashboard -->
+    <a href="{{ url_for('student.dashboard') }}" class="inline-flex items-center text-indigo-600 hover:text-indigo-800 mb-6">
+        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
+        </svg>
+        Back to Dashboard
+    </a>
+
+    <!-- Task Details -->
+    <div class="bg-white rounded-lg shadow-md p-6 mb-8">
+        <div class="flex justify-between items-start mb-6">
+            <div>
+                <h1 class="text-2xl font-bold text-gray-800 mb-2">{{ task.title }}</h1>
+                <div class="flex items-center text-sm text-gray-500">
+                    <span class="mr-4">Created by: {{ task.created_by_user.name }}</span>
+                    <span>Created on: {{ task.created_at.strftime('%Y-%m-%d') }}</span>
+                </div>
+            </div>
+            <div class="text-right">
+                <div class="text-sm font-semibold text-gray-600 mb-1">Deadline</div>
+                <div class="text-lg font-bold {% if task.deadline < now %}text-red-600{% else %}text-green-600{% endif %}">
+                    {{ task.deadline.strftime('%Y-%m-%d %H:%M') }}
+                </div>
+            </div>
+        </div>
+
+        <!-- Task Description -->
+        <div class="prose max-w-none mb-6">
+            {{ task.description|safe }}
+        </div>
+
+        <!-- Notion Documentation -->
+        {% if task.notion_url %}
+        <div class="bg-gray-50 rounded-lg p-4 mb-6">
+            <h3 class="text-lg font-semibold text-gray-800 mb-2">Documentation</h3>
+            <p class="text-gray-600 mb-4">Access the detailed task documentation on Notion:</p>
+            <a href="{{ task.notion_url }}" target="_blank" rel="noopener noreferrer" 
+               class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700">
+                View Documentation
+                <svg class="ml-2 -mr-1 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/>
+                </svg>
+            </a>
+        </div>
+        {% endif %}
+
+        <!-- Submission Status -->
+        {% if submission %}
+        <div class="border-t border-gray-200 pt-6">
+            <h3 class="text-lg font-semibold text-gray-800 mb-4">Your Submission</h3>
+            <div class="bg-gray-50 rounded-lg p-4">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <div class="text-sm text-gray-500">Submitted on</div>
+                        <div class="font-medium">{{ submission.submitted_at.strftime('%Y-%m-%d %H:%M') }}</div>
+                    </div>
+                    <div>
+                        <div class="text-sm text-gray-500">Status</div>
+                        <div class="font-medium">
+                            {% if submission.evaluation %}
+                            <span class="text-green-600">Evaluated</span>
+                            {% else %}
+                            <span class="text-yellow-600">Pending Evaluation</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div>
+                        <div class="text-sm text-gray-500">Submission URL</div>
+                        <a href="{{ submission.submission_url }}" target="_blank" rel="noopener noreferrer" 
+                           class="text-indigo-600 hover:text-indigo-800">View Submission</a>
+                    </div>
+                    {% if submission.evaluation %}
+                    <div>
+                        <div class="text-sm text-gray-500">Total Score</div>
+                        <div class="font-bold text-lg">{{ submission.evaluation.total_score }}/100</div>
+                    </div>
+                    {% endif %}
+                </div>
+
+                {% if submission.evaluation %}
+                <div class="mt-6">
+                    <h4 class="text-md font-semibold text-gray-800 mb-3">Evaluation Details</h4>
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                        <div class="bg-white p-3 rounded shadow-sm">
+                            <div class="text-sm text-gray-500">Functionality</div>
+                            <div class="font-medium">{{ submission.evaluation.functionality_score }}/40</div>
+                        </div>
+                        <div class="bg-white p-3 rounded shadow-sm">
+                            <div class="text-sm text-gray-500">Code Quality</div>
+                            <div class="font-medium">{{ submission.evaluation.code_quality_score }}/20</div>
+                        </div>
+                        <div class="bg-white p-3 rounded shadow-sm">
+                            <div class="text-sm text-gray-500">Performance</div>
+                            <div class="font-medium">{{ submission.evaluation.performance_score }}/20</div>
+                        </div>
+                        <div class="bg-white p-3 rounded shadow-sm">
+                            <div class="text-sm text-gray-500">Documentation</div>
+                            <div class="font-medium">{{ submission.evaluation.documentation_score }}/10</div>
+                        </div>
+                        <div class="bg-white p-3 rounded shadow-sm">
+                            <div class="text-sm text-gray-500">Security</div>
+                            <div class="font-medium">{{ submission.evaluation.security_score }}/10</div>
+                        </div>
+                    </div>
+                    {% if submission.evaluation.feedback %}
+                    <div class="mt-4">
+                        <div class="text-sm text-gray-500 mb-1">Feedback</div>
+                        <div class="bg-white p-3 rounded shadow-sm">
+                            {{ submission.evaluation.feedback|safe }}
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+                {% endif %}
+            </div>
+        </div>
+        {% else %}
+        <!-- Submit Task Button -->
+        {% if task.deadline > now %}
+        <div class="border-t border-gray-200 pt-6">
+            <div class="flex items-center justify-between">
+                <div>
+                    <h3 class="text-lg font-semibold text-gray-800">Submit Your Work</h3>
+                    <p class="text-sm text-gray-500">Submit your work before the deadline</p>
+                </div>
+                <a href="{{ url_for('student.submit_task', task_id=task.id) }}" 
+                   class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700">
+                    Submit Task
+                </a>
+            </div>
+        </div>
+        {% else %}
+        <div class="border-t border-gray-200 pt-6">
+            <div class="bg-red-50 border-l-4 border-red-400 p-4">
+                <div class="flex">
+                    <div class="flex-shrink-0">
+                        <svg class="h-5 w-5 text-red-400" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/>
+                        </svg>
+                    </div>
+                    <div class="ml-3">
+                        <h3 class="text-sm font-medium text-red-800">Submission Closed</h3>
+                        <div class="mt-2 text-sm text-red-700">
+                            <p>The deadline for this task has passed. You can no longer submit your work.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

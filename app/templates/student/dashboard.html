@@ -1,0 +1,137 @@
+{% extends "base.html" %}
+
+{% block title %}Student Dashboard - TIC TaskApp{% endblock %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-8">
+    <!-- Welcome Section -->
+    <div class="bg-white rounded-lg shadow-md p-6 mb-8">
+        <h1 class="text-2xl font-bold text-gray-800 mb-2">Welcome, {{ current_user.name }}!</h1>
+        <p class="text-gray-600">Student Dashboard</p>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <!-- Tasks Overview Card -->
+        <div class="bg-white rounded-lg shadow-md p-6">
+            <div class="flex items-center justify-between mb-4">
+                <h2 class="text-xl font-semibold text-gray-800">Tasks Overview</h2>
+                <span class="text-sm text-gray-500">{{ tasks|length }} Total Tasks</span>
+            </div>
+            <div class="space-y-4">
+                <div class="flex justify-between items-center">
+                    <span class="text-gray-600">Pending Tasks</span>
+                    <span class="font-semibold text-orange-500">{{ pending_tasks|length }}</span>
+                </div>
+                <div class="flex justify-between items-center">
+                    <span class="text-gray-600">Submitted Tasks</span>
+                    <span class="font-semibold text-green-500">{{ submitted_tasks|length }}</span>
+                </div>
+                <div class="flex justify-between items-center">
+                    <span class="text-gray-600">Evaluated Tasks</span>
+                    <span class="font-semibold text-blue-500">{{ evaluated_tasks|length }}</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Your Performance Card -->
+        <div class="bg-white rounded-lg shadow-md p-6">
+            <h2 class="text-xl font-semibold text-gray-800 mb-4">Your Performance</h2>
+            <div class="space-y-4">
+                <div class="flex justify-between items-center">
+                    <span class="text-gray-600">Current Rank</span>
+                    <span class="font-semibold text-purple-500">#{{ current_rank }}</span>
+                </div>
+                <div class="flex justify-between items-center">
+                    <span class="text-gray-600">Total Score</span>
+                    <span class="font-semibold text-indigo-500">{{ total_score }}</span>
+                </div>
+                <div class="flex justify-between items-center">
+                    <span class="text-gray-600">Tasks Completed</span>
+                    <span class="font-semibold text-green-500">{{ tasks_completed }}</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Notifications Card -->
+        <div class="bg-white rounded-lg shadow-md p-6">
+            <div class="flex items-center justify-between mb-4">
+                <h2 class="text-xl font-semibold text-gray-800">Notifications</h2>
+                <span class="bg-red-500 text-white text-xs px-2 py-1 rounded-full">{{ unread_notifications|length }}</span>
+            </div>
+            <div class="space-y-4">
+                {% for notification in notifications[:3] %}
+                <div class="border-l-4 {% if notification.is_read %}border-gray-300{% else %}border-blue-500{% endif %} pl-4">
+                    <p class="text-sm text-gray-800">{{ notification.message }}</p>
+                    <span class="text-xs text-gray-500">{{ notification.created_at.strftime('%Y-%m-%d %H:%M') }}</span>
+                </div>
+                {% endfor %}
+                {% if notifications|length > 3 %}
+                <a href="{{ url_for('student.notifications') }}" class="text-sm text-indigo-600 hover:text-indigo-800">
+                    View all notifications
+                </a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Active Tasks Section -->
+    <div class="mt-8">
+        <h2 class="text-xl font-semibold text-gray-800 mb-4">Active Tasks</h2>
+        <div class="bg-white rounded-lg shadow-md overflow-hidden">
+            <div class="overflow-x-auto">
+                <table class="min-w-full divide-y divide-gray-200">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Task</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Deadline</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Score</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody class="bg-white divide-y divide-gray-200">
+                        {% for task in tasks %}
+                        <tr>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <div class="text-sm font-medium text-gray-900">{{ task.title }}</div>
+                                <div class="text-sm text-gray-500">{{ task.description|truncate(100) }}</div>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <div class="text-sm text-gray-900">{{ task.deadline.strftime('%Y-%m-%d') }}</div>
+                                <div class="text-sm text-gray-500">{{ task.deadline.strftime('%H:%M') }}</div>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                {% if task.status == 'pending' %}
+                                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">
+                                    Pending
+                                </span>
+                                {% elif task.status == 'submitted' %}
+                                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
+                                    Submitted
+                                </span>
+                                {% elif task.status == 'evaluated' %}
+                                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800">
+                                    Evaluated
+                                </span>
+                                {% endif %}
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                {{ task.score if task.score else 'N/A' }}
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                <a href="{{ url_for('student.view_task', task_id=task.id) }}" 
+                                   class="text-indigo-600 hover:text-indigo-900 mr-3">View</a>
+                                {% if task.status == 'pending' %}
+                                <a href="{{ url_for('student.submit_task', task_id=task.id) }}" 
+                                   class="text-green-600 hover:text-green-900">Submit</a>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
