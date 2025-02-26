@@ -1,0 +1,90 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-8">
+    <!-- Stats Overview -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        <!-- Pending Submissions -->
+        <div class="bg-white rounded-lg shadow-lg p-6">
+            <div class="flex items-center">
+                <div class="p-3 rounded-full bg-orange-100 text-orange-500">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+                    </svg>
+                </div>
+                <div class="ml-4">
+                    <p class="text-gray-500">Pending Submissions</p>
+                    <p class="text-2xl font-semibold text-gray-900">{{ pending_submissions }}</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Total Students -->
+        <div class="bg-white rounded-lg shadow-lg p-6">
+            <div class="flex items-center">
+                <div class="p-3 rounded-full bg-blue-100 text-blue-500">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/>
+                    </svg>
+                </div>
+                <div class="ml-4">
+                    <p class="text-gray-500">Total Students</p>
+                    <p class="text-2xl font-semibold text-gray-900">{{ total_students }}</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Active Tasks -->
+        <div class="bg-white rounded-lg shadow-lg p-6">
+            <div class="flex items-center">
+                <div class="p-3 rounded-full bg-green-100 text-green-500">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/>
+                    </svg>
+                </div>
+                <div class="ml-4">
+                    <p class="text-gray-500">Active Tasks</p>
+                    <p class="text-2xl font-semibold text-gray-900">{{ active_tasks }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <!-- Task Management -->
+        <div class="bg-white rounded-lg shadow-lg overflow-hidden">
+            <div class="px-6 py-4 bg-indigo-600">
+                <h3 class="text-lg font-semibold text-white">Task Management</h3>
+            </div>
+            <div class="p-6 space-y-4">
+                <a href="{{ url_for('coordinator.manage_levels') }}" 
+                   class="block w-full text-center bg-indigo-100 text-indigo-700 px-4 py-2 rounded-md hover:bg-indigo-200">
+                    Manage Levels
+                </a>
+                <a href="{{ url_for('coordinator.manage_tasks') }}" 
+                   class="block w-full text-center bg-indigo-100 text-indigo-700 px-4 py-2 rounded-md hover:bg-indigo-200">
+                    Manage Tasks
+                </a>
+            </div>
+        </div>
+
+        <!-- Submission Management -->
+        <div class="bg-white rounded-lg shadow-lg overflow-hidden">
+            <div class="px-6 py-4 bg-green-600">
+                <h3 class="text-lg font-semibold text-white">Submission Management</h3>
+            </div>
+            <div class="p-6 space-y-4">
+                <a href="{{ url_for('coordinator.view_submissions') }}" 
+                   class="block w-full text-center bg-green-100 text-green-700 px-4 py-2 rounded-md hover:bg-green-200">
+                    View Submissions
+                </a>
+                <a href="{{ url_for('coordinator.track_non_submissions') }}" 
+                   class="block w-full text-center bg-green-100 text-green-700 px-4 py-2 rounded-md hover:bg-green-200">
+                    Track Non-Submissions
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

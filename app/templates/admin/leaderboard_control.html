@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-8">
+    <div class="max-w-3xl mx-auto bg-white shadow-lg rounded-lg overflow-hidden">
+        <div class="px-6 py-4 border-b border-gray-200">
+            <h2 class="text-2xl font-bold text-gray-800">Leaderboard Control</h2>
+        </div>
+        
+        <div class="p-6 space-y-8">
+            <!-- Recalculate Scores -->
+            <div>
+                <h3 class="text-lg font-medium text-gray-900 mb-4">Recalculate Scores</h3>
+                <div class="bg-gray-50 rounded-lg p-4">
+                    <p class="text-gray-600 mb-4">
+                        Recalculate all student scores based on their task submissions and evaluations.
+                        This will update the current month's leaderboard.
+                    </p>
+                    <form method="POST" class="inline">
+                        <input type="hidden" name="action" value="recalculate">
+                        <button type="submit" 
+                                class="bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
+                            Recalculate Scores
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Publish/Unpublish Leaderboard -->
+            <div>
+                <h3 class="text-lg font-medium text-gray-900 mb-4">Leaderboard Visibility</h3>
+                <div class="bg-gray-50 rounded-lg p-4">
+                    <p class="text-gray-600 mb-4">
+                        Control the visibility of the current month's leaderboard to students.
+                    </p>
+                    <div class="space-x-4">
+                        <form method="POST" class="inline">
+                            <input type="hidden" name="action" value="publish">
+                            <input type="hidden" name="is_published" value="true">
+                            <button type="submit" 
+                                    class="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2">
+                                Publish Leaderboard
+                            </button>
+                        </form>
+                        
+                        <form method="POST" class="inline">
+                            <input type="hidden" name="action" value="publish">
+                            <input type="hidden" name="is_published" value="false">
+                            <button type="submit" 
+                                    class="bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2">
+                                Unpublish Leaderboard
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Leaderboard Information -->
+            <div>
+                <h3 class="text-lg font-medium text-gray-900 mb-4">Leaderboard Information</h3>
+                <div class="bg-gray-50 rounded-lg p-4 space-y-2">
+                    <div class="text-gray-700">
+                        <span class="font-medium">Scoring Criteria:</span>
+                        <ul class="list-disc list-inside ml-4 mt-2">
+                            <li>Functionality: 40%</li>
+                            <li>Code Quality: 20%</li>
+                            <li>Performance: 20%</li>
+                            <li>Documentation: 10%</li>
+                            <li>Security: 10%</li>
+                        </ul>
+                    </div>
+                    <div class="text-gray-700 mt-4">
+                        <span class="font-medium">Update Frequency:</span> Scores are calculated based on completed task evaluations
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

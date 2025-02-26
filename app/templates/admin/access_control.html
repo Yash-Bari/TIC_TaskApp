@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-8">
+    <div class="max-w-3xl mx-auto bg-white shadow-lg rounded-lg overflow-hidden">
+        <div class="px-6 py-4 border-b border-gray-200">
+            <h2 class="text-2xl font-bold text-gray-800">System Access Control</h2>
+        </div>
+        
+        <div class="p-6 space-y-8">
+            <!-- Allowed Domains -->
+            <div>
+                <h3 class="text-lg font-medium text-gray-900 mb-4">Allowed Domains</h3>
+                <div class="bg-gray-50 rounded-lg p-4">
+                    <ul class="space-y-2">
+                        {% for domain in domains %}
+                        <li class="flex items-center space-x-2">
+                            <span class="w-4 h-4 bg-green-500 rounded-full"></span>
+                            <span class="text-gray-700">{{ domain }}</span>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Special Email Addresses -->
+            <div>
+                <h3 class="text-lg font-medium text-gray-900 mb-4">Special Access Emails</h3>
+                <div class="space-y-4">
+                    <!-- Coordinator Email -->
+                    <div class="bg-blue-50 rounded-lg p-4">
+                        <div class="font-medium text-blue-800 mb-1">Coordinator Email</div>
+                        <div class="text-blue-600">{{ coordinator_email }}</div>
+                    </div>
+
+                    <!-- Admin Email -->
+                    <div class="bg-purple-50 rounded-lg p-4">
+                        <div class="font-medium text-purple-800 mb-1">Admin Email</div>
+                        <div class="text-purple-600">{{ admin_email }}</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Access Rules -->
+            <div>
+                <h3 class="text-lg font-medium text-gray-900 mb-4">Access Rules</h3>
+                <div class="bg-gray-50 rounded-lg p-4 space-y-2">
+                    <div class="text-gray-700">
+                        <span class="font-medium">Students:</span> Must have @srttc.ac.in email domain
+                    </div>
+                    <div class="text-gray-700">
+                        <span class="font-medium">Coordinators:</span> Must use tic.coordinator@srttc.ac.in
+                    </div>
+                    <div class="text-gray-700">
+                        <span class="font-medium">Admins:</span> Must use tic.admin@srttc.ac.in
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

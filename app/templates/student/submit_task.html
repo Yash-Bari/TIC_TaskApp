@@ -41,47 +41,89 @@
             </div>
         </div>
 
+        <!-- Submission Guidelines -->
+        <div class="bg-yellow-50 border-l-4 border-yellow-400 p-4 mb-6">
+            <div class="flex">
+                <div class="flex-shrink-0">
+                    <svg class="h-5 w-5 text-yellow-400" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
+                    </svg>
+                </div>
+                <div class="ml-3">
+                    <h3 class="text-sm font-medium text-yellow-800">Before submitting, please ensure:</h3>
+                    <div class="mt-2 text-sm text-yellow-700">
+                        <ul class="list-disc pl-5 space-y-1">
+                            <li>Your code is well-documented</li>
+                            <li>All requirements are met</li>
+                            <li>The repository is public and accessible</li>
+                            <li>You have tested your solution</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <!-- Submission Form -->
         <form method="POST" class="space-y-6">
+            {{ form.csrf_token }}
+            
+            <!-- GitHub Repository URL -->
             <div>
                 <label for="submission_url" class="block text-sm font-medium text-gray-700">
-                    Submission URL
+                    {{ form.submission_url.label }}
                 </label>
                 <div class="mt-1">
-                    <input type="url" name="submission_url" id="submission_url" required
-                           class="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md"
-                           placeholder="https://github.com/yourusername/repository">
+                    {{ form.submission_url(class="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md", placeholder="https://github.com/yourusername/repository") }}
                 </div>
-                <p class="mt-2 text-sm text-gray-500">
-                    Please provide a link to your work (e.g., GitHub repository, Google Drive folder, or any other accessible URL)
-                </p>
+                {% if form.submission_url.errors %}
+                <div class="mt-1 text-sm text-red-600">
+                    {% for error in form.submission_url.errors %}
+                    <p>{{ error }}</p>
+                    {% endfor %}
+                </div>
+                {% endif %}
+                <p class="mt-1 text-sm text-gray-500">Your GitHub repository containing the task solution</p>
             </div>
 
-            <!-- Submission Guidelines -->
-            <div class="bg-yellow-50 border-l-4 border-yellow-400 p-4">
-                <div class="flex">
-                    <div class="flex-shrink-0">
-                        <svg class="h-5 w-5 text-yellow-400" fill="currentColor" viewBox="0 0 20 20">
-                            <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
-                        </svg>
-                    </div>
-                    <div class="ml-3">
-                        <h3 class="text-sm font-medium text-yellow-800">Before submitting, please ensure:</h3>
-                        <div class="mt-2 text-sm text-yellow-700">
-                            <ul class="list-disc pl-5 space-y-1">
-                                <li>Your code is well-documented</li>
-                                <li>All requirements are met</li>
-                                <li>The URL is accessible</li>
-                                <li>You have tested your solution</li>
-                            </ul>
-                        </div>
-                    </div>
+            <!-- Live Demo URL -->
+            <div>
+                <label for="live_demo_url" class="block text-sm font-medium text-gray-700">
+                    {{ form.live_demo_url.label }}
+                </label>
+                <div class="mt-1">
+                    {{ form.live_demo_url(class="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md", placeholder="https://yourdemo.example.com") }}
                 </div>
+                {% if form.live_demo_url.errors %}
+                <div class="mt-1 text-sm text-red-600">
+                    {% for error in form.live_demo_url.errors %}
+                    <p>{{ error }}</p>
+                    {% endfor %}
+                </div>
+                {% endif %}
+                <p class="mt-1 text-sm text-gray-500">If your task has a live demo, provide the URL here</p>
             </div>
 
-            <div class="flex items-center justify-end">
-                <button type="submit"
-                        class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+            <!-- Comments -->
+            <div>
+                <label for="comments" class="block text-sm font-medium text-gray-700">
+                    {{ form.comments.label }}
+                </label>
+                <div class="mt-1">
+                    {{ form.comments(class="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md", rows="4", placeholder="Any additional information or notes about your submission...") }}
+                </div>
+                {% if form.comments.errors %}
+                <div class="mt-1 text-sm text-red-600">
+                    {% for error in form.comments.errors %}
+                    <p>{{ error }}</p>
+                    {% endfor %}
+                </div>
+                {% endif %}
+                <p class="mt-1 text-sm text-gray-500">Optional: Add any notes or comments about your submission</p>
+            </div>
+
+            <!-- Submit Button -->
+            <div class="flex justify-end pt-6">
+                <button type="submit" class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
                     Submit Task
                 </button>
             </div>

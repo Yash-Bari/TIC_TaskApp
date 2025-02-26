@@ -1,0 +1,128 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-8">
+    <div class="bg-white rounded-lg shadow-lg overflow-hidden">
+        <div class="px-6 py-4 bg-indigo-600 flex justify-between items-center">
+            <h3 class="text-lg font-semibold text-white">Non-Submissions Tracking</h3>
+            <div class="flex space-x-4">
+                <a href="{{ url_for('coordinator.view_submissions') }}" 
+                   class="px-4 py-2 bg-white text-indigo-600 rounded-md hover:bg-indigo-50">
+                    View Submissions
+                </a>
+            </div>
+        </div>
+        
+        <div class="p-6">
+            <!-- Task Filter -->
+            <div class="mb-6">
+                <form method="GET" class="flex space-x-4">
+                    <div class="flex-1">
+                        <label for="task_id" class="block text-sm font-medium text-gray-700">Select Task</label>
+                        <select name="task_id" id="task_id" 
+                                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+                                onchange="this.form.submit()">
+                            <option value="">All Tasks</option>
+                            {% for task in tasks %}
+                            <option value="{{ task.id }}" {% if selected_task_id == task.id %}selected{% endif %}>
+                                {{ task.title }}
+                            </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </form>
+            </div>
+
+            {% if non_submissions %}
+            <div class="space-y-6">
+                {% for student, tasks in non_submissions.items() %}
+                <div class="border rounded-lg p-4 border-red-200">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <h4 class="text-lg font-medium text-gray-900">{{ student.name }}</h4>
+                            <p class="text-sm text-gray-500">{{ student.email }}</p>
+                            <p class="text-sm text-gray-500">Current Level: {{ student.current_level }}</p>
+                        </div>
+                        <div class="flex items-center">
+                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
+                                {{ tasks|length }} Missing Submissions
+                            </span>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-4">
+                        <p class="text-sm font-medium text-gray-700">Missing Tasks:</p>
+                        <div class="mt-2 space-y-2">
+                            {% for task in tasks %}
+                            <div class="flex justify-between items-center p-2 bg-gray-50 rounded">
+                                <div>
+                                    <p class="text-sm font-medium text-gray-900">{{ task.title }}</p>
+                                    <p class="text-xs text-gray-500">Due: {{ task.deadline.strftime('%Y-%m-%d %H:%M') }}</p>
+                                </div>
+                                <div class="flex space-x-2">
+                                    {% if task.notion_url %}
+                                    <a href="{{ task.notion_url }}" target="_blank"
+                                       class="text-xs text-indigo-600 hover:text-indigo-800">Task Details</a>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    
+                    <div class="mt-4">
+                        <button onclick="sendReminder('{{ student.email }}', '{{ student.name }}')"
+                                class="inline-flex items-center px-3 py-1.5 border border-transparent text-xs font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700">
+                            Send Reminder
+                        </button>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div class="text-center py-8">
+                <p class="text-gray-500">No missing submissions found for the selected task.</p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+{% block scripts %}
+<script>
+function sendReminder(email, name) {
+    const taskId = document.getElementById('task_id').value;
+    if (!taskId) {
+        alert('Please select a task first');
+        return;
+    }
+
+    fetch("{{ url_for('coordinator.send_reminder') }}", {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-Token': '{{ csrf_token() if csrf_token else "" }}'
+        },
+        body: JSON.stringify({
+            email: email,
+            name: name,
+            task_id: taskId
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            alert('Reminder sent successfully!');
+        } else {
+            alert('Failed to send reminder: ' + data.error);
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('An error occurred while sending the reminder.');
+    });
+}
+</script>
+{% endblock %}
+
+{% endblock %}
